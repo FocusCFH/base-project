@@ -1,0 +1,85 @@
+# ------------------------------  服务配置 ----------------------------------------------
+server:
+  port: 8091     # 服务端口
+  servlet:
+    context-path: /${spring.application.name}  # 服务uri
+
+#  ---------------------------- 单点登录配置 --------------------------------------------
+auth-server: http://106.12.27.199:8090/auth # 认证服务器地址
+security:
+  oauth2:
+    client:
+      client-id: client # 授权服务器配置的client id
+      client-secret: secret # 授权服务器配置的client secret
+      scope: all
+      access-token-uri: ${auth-server}/oauth/token # 获取access token接口
+      user-authorization-uri: ${auth-server}/oauth/authorize #  获取Authorization Code接口
+    resource:
+      token-info-uri: ${auth-server}/oauth/check_token # 验证token的接口
+#      user-info-uri: ${auth-server}/user # 一个可以获取认证授权的自定义接口，可以在授权服务器，也可以在其他服务器上
+#      prefer-token-info: true # 如果同时配置了token-info-uri 和 user-info-uri，这个现象设置使用哪个取验证授权
+jasypt:
+  encryptor:
+    password: abc123
+
+# ----------------------------- spring 配置 --------------------------------------------
+spring:
+  profiles:
+    active: dev  # 激活配置
+  application:
+    name: spider # 服务名称
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://106.12.27.199:5432/agcim
+    username: agcim
+    password: agcim123
+  redis: # redis配置
+    host: 106.12.27.199
+    port: 6379
+    password: agcim-2020
+    database: 1
+  kafka: # kafka 配置
+    bootstrap-servers: 106.12.27.199:9092
+    consumer:
+      group-id: system.log.topic
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest # 设置消费者分组最初的消费进度为 earliest
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: org.example.spider.domain  # 指定序列化的包，必须
+      # Kafka Consumer Listener 监听器配置
+      listener:
+        missing-topics-fatal: false # 消费监听接口监听的主题不存在时，默认会报错。所以通过设置为 false ，解决报错
+      enable-auto-commit: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    template:
+      default-topic: other-topic
+  rabbitmq: # rabbitmq配置
+    host: 106.12.27.199
+    port: 5672
+    username: admin
+    password: admin
+
+# mybatis plus配置
+mybatis-plus:
+  mapper-locations: classpath*:com/base/client/mapper/**/*Mapper.xml
+  type-aliases-package: com.base.client.domain.*
+
+# ****************************************** person base config *******************************************************
+# RabbitMQ queue config
+mq:
+  direct:
+    queue: mq.direct.queue
+    exchange: mq.direct.exchange
+    routekey: mq.direct.routekey
+    listener-method-name: directListener
+# kafka topic config
+kafka:
+  consumer:
+    groupId: system.log.topic
+    topics: system.log.topic.v1,system.log.topic.v2,system.log.topic.v3,system.log.topic.v66
