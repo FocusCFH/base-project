@@ -5,7 +5,7 @@ server:
     context-path: /${spring.application.name}  # 服务uri
 
 #  ---------------------------- 单点登录配置 --------------------------------------------
-auth-server: http://106.12.27.199:8090/auth # 认证服务器地址
+auth-server: http://192.168.8.195:8090/auth # 认证服务器地址
 security:
   oauth2:
     client:
