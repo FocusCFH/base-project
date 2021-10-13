@@ -14,10 +14,10 @@ import org.springframework.web.filter.CorsFilter;
  * @version: 1.0
  */
 @SpringBootApplication
-public class SsoApplication {
+public class OauthSsoApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SsoApplication.class, args);
+        SpringApplication.run(OauthSsoApplication.class, args);
     }
 
     /**
